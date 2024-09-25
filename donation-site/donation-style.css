@@ -140,6 +140,8 @@ header {
 }
 
 .frame07 {
+    display: flex;
+
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
@@ -148,6 +150,10 @@ header {
 
     max-width: 1500px;
     max-height: 800px;
+
+    border-style: solid;
+    border-radius: 15px;
+    border-color: black;
 }
 
 .img01 {
@@ -155,4 +161,39 @@ header {
 
     margin-top: 30px;
     margin-left: 30px;
+    margin-bottom: 30px;
+
+    border-radius: 0px;
+    border-color: black;
+    border-style: inset;
+    border-width: 15px;
+}
+
+.sub-frame01 {
+    margin-top: 0px;
+    margin-left: 30px;
+    padding: 10px;
+
+    background-color: #ffbf1f;
+
+    height: 200px;
+
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    border-color: black;
+    border-style: solid;
+
+    border-top-color: #ffbf1f;
+}
+
+.titulo05 {
+    font-family: var(--font01);
+
+    padding: 15px;
+
+    border-radius: 15px;
+    border-width: 2px;
+    border-color: black;
+    border-style: solid;
 }
