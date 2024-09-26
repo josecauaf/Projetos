@@ -45,6 +45,21 @@ header {
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
 
+    transition: ease 0.5s;
+
+    animation-name: frame01;
+    animation-duration: 1.5s;
+    animation-delay: 0;
+}
+
+@keyframes frame01 {
+    0% {max-width: 500px;}
+    100% {max-width: 600px;}
+}
+
+#frame01:hover {
+    max-width: 700px;
+    
 }
 
 #titulo02 {
@@ -59,11 +74,19 @@ header {
     background-color: #57e3ff;
 
     max-width: 1200px;
+    min-height: 110px;
 
     border-style: solid;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     border-right: #57e3ff;
+
+    transition: ease 0.5s;
+}
+
+#frame02:hover {
+    max-width: 1300px;
+    
 }
 
 .paragrafo02 {
@@ -77,7 +100,8 @@ header {
     background-color: #fcff57;
 
     max-width: 600px;
-    max-height: 100px;
+    min-height: 110px;
+    max-height: 110px;
 
     margin-top: 15px;
     margin-left: -10px;
@@ -85,6 +109,13 @@ header {
     border-style: solid;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
+
+    transition: ease 0.5s;
+}
+
+.frame03:hover {
+    max-width: 700px;
+    
 }
 
 .titulo03 {
@@ -149,7 +180,7 @@ header {
     background-color: white;
 
     max-width: 1500px;
-    max-height: 800px;
+    max-height: 1900px;
 
     border-style: solid;
     border-radius: 15px;
@@ -163,7 +194,7 @@ header {
     margin-left: 30px;
     margin-bottom: 30px;
 
-    border-radius: 0px;
+    border-radius: 10px;
     border-color: black;
     border-style: inset;
     border-width: 15px;
@@ -176,7 +207,7 @@ header {
 
     background-color: #ffbf1f;
 
-    height: 200px;
+    max-height: 300px;
 
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -196,4 +227,62 @@ header {
     border-width: 2px;
     border-color: black;
     border-style: solid;
+}
+
+.lista01 {
+    font-family: var(--font01);
+}
+
+.sub-frame02 {
+    background-color: #e8e8e8;
+
+    max-width: 300px;
+
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+
+    border-style: solid;
+    border-radius: 15px;
+}
+
+.img02 {
+    padding: 10px;
+
+    max-width: 300px;
+    max-height: 100px;
+}
+
+.paragrafo03 {
+    font-family: var(--font01);
+    font-weight: 700;
+    font-size: 25px;
+
+    padding: 15px;
+}
+
+.sub-frame03 {
+    background-color: #e8e8e8;
+
+    max-width: 400px;
+
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+
+    border-style: solid;
+    border-radius: 15px;
+}
+
+.titulo06 {
+    font-family: var(--font01);
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+}
+
+.lista02 {
+    font-family: var(--font01);
+
+    margin-left: 10px;
 }
