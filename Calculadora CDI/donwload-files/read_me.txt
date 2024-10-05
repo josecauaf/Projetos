@@ -1,0 +1,1 @@
+Olá! Este é apenas um guia para te informar que, o Setup instalador irá fazer a instalação da pasta "_internal" e do aplicativo (.exe, executável) "calculadora-cdi". O setup irá instalar pastas personalizadas caso o usuário desejar alterar o nome, sendo essa a única diferença.
