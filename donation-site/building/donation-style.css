@@ -130,6 +130,7 @@ header {
     background-color: #fcff57;
 
     max-width: 1200px;
+    min-height: 110px;
 
     border-style: solid;
     border-top-left-radius: 15px;
@@ -148,7 +149,7 @@ header {
     background-color: #57ffa8;
 
     max-width: 600px;
-    max-height: 100px;
+    min-height: 120px;
 
     margin-top: 15px;
     margin-left: -10px;
@@ -177,6 +178,7 @@ header {
     background-color: #57ffa8;
 
     max-width: 1200px;
+    min-height: 110px;
 
     border-style: solid;
     border-top-left-radius: 15px;
@@ -434,3 +436,35 @@ header {
   }
 }
 
+.frame09 {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+
+    background-color: white;
+
+    max-width: 800px;
+    max-height: 1900px;
+
+    border-style: solid;
+    border-radius: 15px;
+    border-color: black;
+}
+
+.sub-frame06 {
+    background-color: #e8e8e8;
+
+    max-width: 600px;
+
+    margin-top: 25px;
+    margin-bottom: 25px;
+
+    border-style: solid;
+    border-radius: 15px;
+
+    transition: ease 0.5s;
+}
