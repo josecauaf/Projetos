@@ -221,7 +221,6 @@ header {
     max-width: 200px;
 
     margin-top: 30px;
-    margin-left: 30px;
     margin-bottom: 30px;
 
     border-radius: 10px;
@@ -249,9 +248,12 @@ header {
     max-height: 200px;
 }
 
+.img04 {
+    max-height: 200px;
+}
+
 .sub-frame01 { 
     margin-top: 0px;
-    margin-left: 30px;
     padding: 10px;
 
     background-color: #ffbf1f;
@@ -294,7 +296,6 @@ header {
     max-width: 300px;
 
     margin-top: 25px;
-    margin-left: 25px;
     margin-bottom: 25px;
 
     border-style: solid;
@@ -328,7 +329,6 @@ header {
     max-width: 400px;
 
     margin-top: 25px;
-    margin-left: 25px;
     margin-bottom: 25px;
 
     border-style: solid;
@@ -379,7 +379,6 @@ header {
     max-width: 600px;
 
     margin-top: 25px;
-    margin-left: 25px;
     margin-bottom: 25px;
 
     border-style: solid;
@@ -388,8 +387,8 @@ header {
     transition: ease 0.5s;
 }
 
-.sub-frame04 {
-    font-size: 38px;
+.sub-frame04 h2{
+    font-size: 3.9vw;
 }
 
 .lista03 li {
