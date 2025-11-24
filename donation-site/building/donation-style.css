@@ -135,6 +135,13 @@ header {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     border-right: #fcff57;
+
+    transition: ease 0.5s;
+}
+
+.frame04:hover {
+    max-width: 1320px;
+    
 }
 
 .frame05 {
@@ -149,6 +156,13 @@ header {
     border-style: solid;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
+
+    transition: ease 0.5s;
+}
+
+.frame05:hover {
+    max-width: 800px;
+    
 }
 
 .titulo04 {
@@ -168,10 +182,19 @@ header {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     border-right: #57ffa8;
+
+    transition: ease 0.5s;
+}
+
+.frame06:hover {
+    max-width: 1320px;
+    
 }
 
 .frame07 {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 
     margin-top: 30px;
     margin-left: auto;
@@ -179,12 +202,19 @@ header {
 
     background-color: white;
 
-    max-width: 1500px;
+    max-width: 800px;
     max-height: 1900px;
 
     border-style: solid;
     border-radius: 15px;
     border-color: black;
+    
+    transition: ease 0.5s;
+}
+
+.frame07:hover {
+    max-width: 850px;
+    max-height: 1950px;
 }
 
 .img01 {
@@ -195,12 +225,18 @@ header {
     margin-bottom: 30px;
 
     border-radius: 10px;
-    border-color: black;
-    border-style: inset;
+    border-color: orange;
+    border-style: groove;
     border-width: 15px;
+
+    transition: ease 0.2s;
 }
 
-.sub-frame01 {
+.img01:hover {
+    border-width: 19px;
+}
+
+.sub-frame01 { 
     margin-top: 0px;
     margin-left: 30px;
     padding: 10px;
@@ -208,14 +244,20 @@ header {
     background-color: #ffbf1f;
 
     max-height: 300px;
+    max-width: 400px;
 
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-radius: 10px;
 
     border-color: black;
     border-style: solid;
 
-    border-top-color: #ffbf1f;
+    transition: ease 0.2s;
+}
+
+.sub-frame01:hover {
+    border-style: outset;
+    border-width: 10px;
+    border-color: orange;
 }
 
 .titulo05 {
@@ -244,6 +286,12 @@ header {
 
     border-style: solid;
     border-radius: 15px;
+
+    transition: ease 0.5s;
+}
+
+.sub-frame02:hover {
+    border-color: orange;
 }
 
 .img02 {
@@ -272,6 +320,12 @@ header {
 
     border-style: solid;
     border-radius: 15px;
+
+    transition: ease 0.5s;
+}
+
+.sub-frame03:hover {
+    border-color: orange;
 }
 
 .titulo06 {
@@ -286,3 +340,85 @@ header {
 
     margin-left: 10px;
 }
+
+.frame08 {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+
+    background-color: white;
+
+    max-width: 800px;
+    max-height: 1900px;
+
+    border-style: solid;
+    border-radius: 15px;
+    border-color: black;
+}
+
+.sub-frame04 {
+    background-color: #e8e8e8;
+
+    max-width: 600px;
+
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+
+    border-style: solid;
+    border-radius: 15px;
+
+    transition: ease 0.5s;
+}
+
+.sub-frame04 {
+    font-size: 38px;
+}
+
+.lista03 li {
+    font-size: 20px;
+}
+
+.rainbow-text {
+  font-family: var(--font01);
+  font-weight: bold;
+
+  text-align: center;
+  
+  background: linear-gradient(
+    to right, 
+    red, 
+    orange, 
+    yellow, 
+    green, 
+    blue, 
+    indigo, 
+    violet, 
+    red
+  );
+  
+  background-size: 400% 100%; 
+  
+  -webkit-background-clip: text; 
+  background-clip: text; 
+  
+  color: transparent;
+  
+  animation: rainbow-movement 8s linear infinite;
+}
+
+@keyframes rainbow-movement {
+  0% {
+
+    background-position: 0% 50%;
+  }
+  100% {
+
+    background-position: 400% 50%;
+  }
+}
+
