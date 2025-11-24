@@ -236,6 +236,19 @@ header {
     border-width: 19px;
 }
 
+.img-frame01 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    margin: 0 auto;
+    padding: 0;
+}
+
+.img03 {
+    max-height: 200px;
+}
+
 .sub-frame01 { 
     margin-top: 0px;
     margin-left: 30px;
