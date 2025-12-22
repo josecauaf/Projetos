@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROLETA DE TIMES SUPREME</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #6c5ce7; 
+            --success: #00b894; 
+            --danger: #d63031; 
+            --team-a: #0984e3; 
+            --team-b: #e17055;
+            --gray: #636e72;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            overflow-x: hidden;
+            background: #000; /* Fundo preto enquanto o vídeo não carrega */
+        }
+
+        /* CONFIGURAÇÃO DO VÍDEO BACKGROUND */
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            transition: opacity 1.5s ease-in-out; /* Transição suave */
+        }
+
+        /* Camada para escurecer o vídeo e melhorar a leitura */
+        .overlay-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Ajuste o 0.5 para mais ou menos brilho */
+            z-index: -1;
+        }
+
+        .header-title {
+            font-size: 60px; font-weight: 900; text-transform: uppercase; margin: 20px 0 40px 0; text-align: center;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: rainbow 3s linear infinite; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+            letter-spacing: -2px;
+        }
+
+        @keyframes rainbow { to { background-position: 200% center; } }
+
+        .main-layout { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 30px; width: 100%; max-width: 1200px; }
+
+        .team-column { 
+            background: rgba(255, 255, 255, 0.9); /* Branco semi-transparente */
+            backdrop-filter: blur(10px); /* Efeito de vidro */
+            border-radius: 12px; padding: 15px; width: 280px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-height: 450px; flex-shrink: 0;
+            display: flex; flex-direction: column;
+        }
+
+        .center-column { display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
+
+        .sound-container {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .sound-btn { background: none; border: none; cursor: pointer; font-size: 22px; width: 40px; height: 40px; }
+        .volume-slider { -webkit-appearance: slider-vertical; width: 8px; height: 80px; cursor: pointer; }
+
+        .input-section { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
+            padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            width: 100%; max-width: 400px; margin-bottom: 20px; 
+        }
+        
+        .input-group { display: flex; gap: 5px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
+        
+        .items-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; justify-content: center; }
+        .item-tag { background: #e0e0e0; padding: 6px 12px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .remove-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
+
+        .wheel-box { position: relative; width: 350px; height: 350px; margin: 20px 0; }
+        .arrow { 
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%); 
+            width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; 
+            border-top: 30px solid var(--danger); z-index: 10;
+        }
+
+        canvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        .controls-group { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+        .spin-btn { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 20px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .reset-btn { background: var(--gray); color: white; border: none; padding: 10px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+
+        .team-list li { background: #f8f9fa; margin: 8px 0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ddd; font-weight: bold; }
+        #listTeamA li { border-left-color: var(--team-a); }
+        #listTeamB li { border-left-color: var(--team-b); }
+
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 350px; }
+
+        @media (max-width: 900px) { .main-layout { flex-direction: column; align-items: center; } .team-column { width: 100%; } .header-title { font-size: 40px; } }
+    </style>
+</head>
+<body>
+
+    <div id="video-container">
+        <video id="video1" class="bg-video" muted playsinline style="opacity: 1;"></video>
+        <video id="video2" class="bg-video" muted playsinline style="opacity: 0;"></video>
+    </div>
+    <div class="overlay-bg"></div>
+
+    <h1 class="header-title">Roleta da STB</h1>
+
+    <div class="sound-container">
+        <button id="toggleSound" class="sound-btn" onclick="toggleMusic()">🔇</button>
+        <input type="range" id="volumeControl" class="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="changeVolume(this.value)">
+    </div>
+
+    <audio id="bgMusic" loop><source src="música-tema-original-completa.mp3" type="audio/mpeg"></audio>
+
+    <div class="main-layout">
+        <div class="team-column">
+            <h3 style="color:var(--team-a); text-align:center;">🔵 Time A <span id="countA">(0)</span></h3>
+            <ul id="listTeamA" class="team-list"></ul>
+        </div>
+
+        <div class="center-column">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="nameInput" placeholder="Adicionar nome..." onkeypress="if(event.key==='Enter') addItem()">
+                    <button onclick="addItem()" style="cursor:pointer; background:var(--primary); color:white; border:none; border-radius:5px; padding:0 15px; font-weight:bold;">+</button>
+                </div>
+                <div id="tagsContainer" class="items-list"></div>
+            </div>
+
+            <div class="wheel-box">
+                <div class="arrow"></div>
+                <canvas id="canvas" width="500" height="500"></canvas>
+            </div>
+
+            <div class="controls-group">
+                <button id="btnSpin" class="spin-btn" onclick="spin()">GIRAR ROLETA!</button>
+                <button class="reset-btn" onclick="resetTeams()">Resetar Todos os Times</button>
+            </div>
+        </div>
+
+        <div class="team-column">
+            <h3 style="color:var(--team-b); text-align:center;">🟠 Time B <span id="countB">(0)</span></h3>
+            <ul id="listTeamB" class="team-list"></ul>
+        </div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+            <h2>🏆 Sorteado!</h2>
+            <div id="winnerName" class="winner-text" style="font-size:40px; font-weight:bold; color:var(--primary); margin:20px 0;"></div>
+            <div class="modal-buttons">
+                <button class="btn-modal" style="background:var(--team-a); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;" onclick="moveToTeam('A')">Mover p/ A</button>
+                <button class="btn-modal" style="background:var(--team-b); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;" onclick="moveToTeam('B')">Mover p/ B</button>
+                <button class="btn-modal" style="background:var(--danger); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer; grid-column: span 2;" onclick="removeWinner()">Remover Jogador</button>
+                <button class="btn-modal" style="background:#eee; padding:10px; border:none; border-radius:5px; cursor:pointer; grid-column: span 2; margin-top:5px;" onclick="closeModal()">Manter na Roleta</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LÓGICA DO VÍDEO BACKGROUND ---
+        const playlist = [
+            'video1.mp4', // Substitua pelos seus arquivos reais
+            'video2.mp4',
+            'video3.mp4',
+            'video4.mp4',
+            'video5.mp4',
+            'video6.mp4',
+            'video7.mp4'
+        ];
+        
+        let currentVideoIndex = 0;
+        const v1 = document.getElementById('video1');
+        const v2 = document.getElementById('video2');
+        let activeVideo = v1;
+        let idleVideo = v2;
+
+        function loadNextVideo() {
+            idleVideo.src = playlist[currentVideoIndex];
+            idleVideo.load();
+        }
+
+        function switchVideo() {
+            // Inverter opacidades para transição suave
+            activeVideo.style.opacity = 0;
+            idleVideo.style.opacity = 1;
+            idleVideo.play();
+
+            // Trocar referências
+            let temp = activeVideo;
+            activeVideo = idleVideo;
+            idleVideo = temp;
+
+            // Preparar próximo vídeo
+            currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+            setTimeout(loadNextVideo, 2000); // Carrega o próximo após a transição
+        }
+
+        activeVideo.src = playlist[currentVideoIndex];
+        activeVideo.play();
+        currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+        loadNextVideo();
+
+        // Monitorar fim do vídeo para trocar
+        v1.onended = switchVideo;
+        v2.onended = switchVideo;
+
+        // --- RESTANTE DA LÓGICA DA ROLETA ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const bgMusic = document.getElementById('bgMusic');
+        const soundBtn = document.getElementById('toggleSound');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTickSound() {
+            if (isMuted) return;
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+            g.gain.setValueAtTime(bgMusic.volume * 0.3, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        let nomes = ["Jogador 1", "Jogador 2", "Jogador 3", "Jogador 4"];
+        let timeA = []; let timeB = [];
+        let isMuted = true; let isSpinning = false;
+        let lastTickedSlice = -1;
+
+        function toggleMusic() {
+            if (isMuted) { bgMusic.play(); audioCtx.resume(); soundBtn.innerText = "🔊"; isMuted = false; }
+            else { bgMusic.pause(); soundBtn.innerText = "🔇"; isMuted = true; }
+        }
+
+        function changeVolume(val) { bgMusic.volume = val; }
+        function addItem() {
+            const input = document.getElementById('nameInput');
+            if (input.value.trim()) { nomes.push(input.value.trim()); input.value = ""; draw(); }
+        }
+        function remove(index) { nomes.splice(index, 1); draw(); }
+        function removeFromTeam(team, index) {
+            if (team === 'A') timeA.splice(index, 1); else timeB.splice(index, 1);
+            updateTeams();
+        }
+        function resetTeams() { if(confirm("Limpar os times?")) { timeA = []; timeB = []; updateTeams(); } }
+
+        function draw() {
+            const container = document.getElementById('tagsContainer');
+            container.innerHTML = nomes.map((n, i) => `
+                <div class="item-tag">${n} <span class="remove-btn" onclick="remove(${i})">x</span></div>
+            `).join('');
+
+            ctx.clearRect(0, 0, 500, 500);
+
+            if (nomes.length === 0) {
+                const arc = (Math.PI * 2) / 8;
+                for (let i = 0; i < 8; i++) {
+                    ctx.beginPath(); ctx.fillStyle = `hsl(${(i * 360) / 8}, 70%, 60%)`;
+                    ctx.moveTo(250, 250); ctx.arc(250, 250, 250, i * arc, (i + 1) * arc); ctx.fill(); ctx.stroke();
+                }
+                ctx.save(); ctx.translate(250, 250); ctx.textAlign = "center"; ctx.fillStyle = "white"; ctx.font = "bold 24px Arial"; ctx.fillText("Adicione Nomes", 0, 0); ctx.restore();
+                document.getElementById('btnSpin').disabled = true;
+            } else {
+                const arc = (Math.PI * 2) / nomes.length;
+                nomes.forEach((nome, i) => {
+                    ctx.beginPath(); ctx.fillStyle = `hsl(${(i * 360) / nomes.length}, 70%, 60%)`;
+                    ctx.moveTo(250, 250); ctx.arc(250, 250, 250, i * arc, (i + 1) * arc); ctx.fill();
+                    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.stroke();
+                    ctx.save(); ctx.translate(250, 250); ctx.rotate(i * arc + arc / 2); ctx.textAlign = "right"; ctx.fillStyle = "white"; ctx.font = "bold 18px Arial"; ctx.fillText(nome.substring(0, 15), 230, 10); ctx.restore();
+                });
+                document.getElementById('btnSpin').disabled = false;
+            }
+        }
+
+        function spin() {
+            if (nomes.length < 1 || isSpinning) return;
+            isSpinning = true;
+            document.getElementById('btnSpin').disabled = true;
+            
+            const winnerIndex = Math.floor(Math.random() * nomes.length);
+            const arcDegrees = 360 / nomes.length;
+            const targetRotation = 3600 + (360 - (winnerIndex * arcDegrees + arcDegrees/2)) + 270;
+
+            let startTimestamp = null;
+            function animate(timestamp) {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / 5000, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 4);
+                const currentRotation = easeOut * targetRotation;
+                canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+                const normalizedRotation = currentRotation % 360;
+                const currentSlice = Math.floor((360 - ((normalizedRotation - 270 + 360) % 360)) / arcDegrees);
+                if (currentSlice !== lastTickedSlice) { playTickSound(); lastTickedSlice = currentSlice; }
+
+                if (progress < 1) requestAnimationFrame(animate);
+                else {
+                    document.getElementById('winnerName').innerText = nomes[winnerIndex];
+                    lastWinnerIndex = winnerIndex;
+                    modalOverlay.style.display = 'flex';
+                    setTimeout(() => modalOverlay.classList.add('active'), 10);
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    isSpinning = false;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function updateTeams() {
+            document.getElementById('listTeamA').innerHTML = timeA.map((n, i) => `<li>${n} <span style="cursor:pointer; color:#999" onclick="removeFromTeam('A', ${i})">&times;</span></li>`).join('');
+            document.getElementById('listTeamB').innerHTML = timeB.map((n, i) => `<li>${n} <span style="cursor:pointer; color:#999" onclick="removeFromTeam('B', ${i})">&times;</span></li>`).join('');
+            document.getElementById('countA').innerText = `(${timeA.length})`;
+            document.getElementById('countB').innerText = `(${timeB.length})`;
+        }
+
+        function moveToTeam(team) {
+            const name = nomes[lastWinnerIndex];
+            if (team === 'A') timeA.push(name); else timeB.push(name);
+            nomes.splice(lastWinnerIndex, 1); updateTeams(); draw(); closeModal();
+        }
+        function removeWinner() { nomes.splice(lastWinnerIndex, 1); draw(); closeModal(); }
+        function closeModal() { modalOverlay.classList.remove('active'); setTimeout(() => { modalOverlay.style.display = 'none'; document.getElementById('btnSpin').disabled = false; }, 400); }
+
+        draw();
+    </script>
+</body>
+</html>
