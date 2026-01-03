@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Star Kings League - Draft</title>
+    <style>
+        :root {
+            --neon: #d8ff00;
+            --bg: rgba(5, 5, 7, 0.7);
+            --card-bg: rgba(16, 16, 20, 0.8);
+            --text: #eee;
+            
+            --ferro: #716d6d;
+            --bronze: #ad5a3e;
+            --prata: #a3a3a3;
+            --ouro: #f1a31f;
+            --platina: #489990;
+            --esmeralda: #2ecc71;
+            --diamante: #3498db;
+            --mestre: #9b59b6;
+            --grao-mestre: #e74c3c;
+            --desafiante: #f1c40f;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background-color: #050507;
+        }
+
+        #bgVideo {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.5;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--text);
+            margin: 0; padding: 10px 20px;
+            display: flex; flex-direction: column;
+            height: 98vh; overflow: hidden;
+            background: transparent;
+        }
+
+        .main-header {
+            padding: 10px 0;
+            border-bottom: 2px solid var(--neon);
+            margin-bottom: 15px;
+            display: flex; align-items: baseline; gap: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .main-header h1 {
+            margin: 0; font-size: 2.2rem; text-transform: uppercase;
+            font-style: italic; color: var(--neon); letter-spacing: 3px;
+        }
+
+        .content-wrapper { display: flex; gap: 15px; flex-grow: 1; overflow: hidden; margin-bottom: 10px; }
+
+        .teams-grid {
+            flex: 4; display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .team-card {
+            border: 1px solid #333; 
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        .team-card:hover { border-color: var(--neon); background: rgba(20, 20, 25, 0.9); }
+
+        .logo-area { width: 100%; height: 110px; background: rgba(0,0,0,0.5); border-bottom: 1px solid #222; }
+        .logo-area img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+
+        .team-header {
+            background: var(--neon); color: #000; font-weight: 900;
+            text-align: center; font-size: 0.8rem; padding: 3px 0; text-transform: uppercase;
+        }
+
+        .player-slots { padding: 6px; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; font-size: 0.75rem; }
+
+        .slot-item {
+            background: rgba(255,255,255,0.05); padding: 4px 8px;
+            display: flex; justify-content: space-between; align-items: center; border-radius: 2px;
+        }
+
+        .sidebar {
+            flex: 1.2; 
+            background: rgba(10, 10, 12, 0.85); 
+            backdrop-filter: blur(10px);
+            border-left: 1px solid var(--neon);
+            display: flex; flex-direction: column; padding: 0 15px;
+        }
+
+        .role-section { margin-bottom: 12px; }
+        .role-head { color: var(--neon); font-size: 0.8rem; font-weight: bold; border-bottom: 1px solid #333; margin-bottom: 5px; }
+
+        .p-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 4px 6px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .p-wrapper:hover { background: rgba(216, 255, 0, 0.1); }
+        .p-wrapper.active { background: rgba(216, 255, 0, 0.2); border-left: 3px solid var(--neon); }
+
+        .p-name { font-size: 0.85rem; text-shadow: 1px 1px 2px black; }
+
+        .elo-badge {
+            font-size: 0.6rem; font-weight: bold; padding: 1px 4px;
+            border-radius: 3px; text-transform: uppercase; border: 1px solid currentColor;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .ferro { color: var(--ferro); } .bronze { color: var(--bronze); } .prata { color: var(--prata); }
+        .ouro { color: var(--ouro); } .platina { color: var(--platina); } .esmeralda { color: var(--esmeralda); }
+        .diamante { color: var(--diamante); } .mestre { color: var(--mestre); } 
+        .grao-mestre { color: var(--grao-mestre); } .desafiante { color: var(--desafiante); }
+
+        .remove-x { color: #ff4444; cursor: pointer; font-size: 0.7rem; margin-left: 5px; }
+        #status-bar { font-size: 0.7rem; color: var(--neon); margin-bottom: 10px; font-weight: bold; text-transform: uppercase; }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding-top: 5px;
+            border-top: 1px solid rgba(216, 255, 0, 0.2);
+            text-shadow: 1px 1px 2px black;
+        }
+        footer strong { color: var(--neon); }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video autoplay muted loop id="bgVideo">
+            <source src="background.webm" type="video/webm">
+        </video>
+    </div>
+
+    <header class="main-header">
+        <h1>Draft da Star Kings League</h1>
+        <span style="color:#888">// EDIÇÃO 2026</span>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="teams-grid" id="teams-grid"></div>
+
+        <div class="sidebar">
+            <div id="status-bar">AGUARDANDO SELEÇÃO</div>
+            <div id="pool-list" style="overflow-y: auto; padding-right: 5px;"></div>
+        </div>
+    </div>
+
+    <footer>
+        Desenvolvido por <strong>STB Development Team</strong> • Star Kings League © 2026
+    </footer>
+
+    <script>
+        const captains = [
+            { name: "GABRIEL", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "MATHEUS", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "TÁSSIO", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "CAUÃ", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "MARCELO", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "JAIR", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "TITO", img: "https://via.placeholder.com/200x110/111?text=LOGO" },
+            { name: "NORDESTE", img: "https://via.placeholder.com/200x110/111?text=LOGO" }
+        ];
+
+        let pool = {
+            "TOP": [
+                { n: "Marcelo", e: "Esmeralda II" },
+                { n: "Matheus", e: "Platina I" }
+            ],
+            "JNG": [
+                { n: "Gabriel", e: "Mestre" },
+                { n: "Tássio", e: "Diamante IV" }
+            ],
+            "MID": [
+                { n: "Cauã", e: "Ouro III" },
+                { n: "Nordeste", e: "Prata I" }
+            ],
+            "ADC": [
+                { n: "Tito", e: "Esmeralda IV" },
+                { n: "Fred", e: "Ouro II" }
+            ],
+            "SUP": [
+                { n: "Carlos", e: "Bronze I" },
+                { n: "Marcilio", e: "Diamante II" }
+            ]
+        };
+
+        let activePick = null;
+
+        function getEloColorClass(eloText) {
+            return eloText.split(' ')[0].toLowerCase().replace('grão-mestre', 'grao-mestre');
+        }
+
+        function render() {
+            const grid = document.getElementById('teams-grid');
+            grid.innerHTML = captains.map((c, i) => `
+                <div class="team-card" onclick="pickTo(${i})">
+                    <div class="logo-area"><img src="${c.img}"></div>
+                    <div class="team-header">${c.name}</div>
+                    <div class="player-slots" id="t-${i}"></div>
+                </div>
+            `).join('');
+            renderPool();
+        }
+
+        function renderPool() {
+            const list = document.getElementById('pool-list');
+            list.innerHTML = Object.entries(pool).map(([role, players]) => `
+                <div class="role-section">
+                    <div class="role-head">${role}</div>
+                    ${players.map(p => `
+                        <div class="p-wrapper ${activePick?.n === p.n ? 'active' : ''}" onclick="selectP('${p.n}', '${p.e}', '${role}')">
+                            <span class="p-name">${p.n}</span>
+                            <span class="elo-badge ${getEloColorClass(p.e)}">${p.e}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function selectP(name, elo, role) {
+            activePick = { n: name, e: elo, r: role };
+            document.getElementById('status-bar').innerText = `SELECIONADO: ${name.toUpperCase()} (${elo})`;
+            renderPool();
+        }
+
+        function pickTo(idx) {
+            if (!activePick) return;
+            const container = document.getElementById(`t-${idx}`);
+            const item = document.createElement('div');
+            item.className = 'slot-item';
+            
+            const colorClass = getEloColorClass(activePick.e);
+            
+            item.innerHTML = `
+                <div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                    <strong class="${colorClass}">[${activePick.r}]</strong> ${activePick.n} 
+                    <small class="${colorClass}" style="font-size: 0.6rem; opacity: 0.9;">${activePick.e}</small>
+                </div>
+                <span class="remove-x" onclick="removeP(event, '${activePick.n}', '${activePick.e}', '${activePick.r}')">✖</span>
+            `;
+            container.appendChild(item);
+
+            pool[activePick.r] = pool[activePick.r].filter(p => p.n !== activePick.n);
+            activePick = null;
+            document.getElementById('status-bar').innerText = "AGUARDANDO SELEÇÃO";
+            renderPool();
+        }
+
+        function removeP(e, name, elo, role) {
+            e.stopPropagation();
+            e.target.parentElement.remove();
+            pool[role].push({ n: name, e: elo });
+            renderPool();
+        }
+
+        render();
+    </script>
+</body>
+</html>
